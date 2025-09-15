@@ -1,5 +1,5 @@
 name: HoolReverse
-version: '1.0'
+version: '1.0.1'
 main: pixik.ru.hoolreverse.HoolReverse
 api-version: '1.21'
 authors: [PixikDev]

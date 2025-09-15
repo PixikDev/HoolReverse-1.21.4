@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -45,6 +46,8 @@ public class HoolReverse extends JavaPlugin implements Listener, TabExecutor {
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("hoolreverse").setExecutor(this);
         getCommand("hoolreverse").setTabCompleter(this);
+
+        getServer().getPluginManager().registerEvents(new CommandListener(), this);
     }
 
     private void loadConfig() {
@@ -180,6 +183,23 @@ public class HoolReverse extends JavaPlugin implements Listener, TabExecutor {
         return meta.getPersistentDataContainer().has(reverseKey, PersistentDataType.BYTE);
     }
 
+    @EventHandler
+    public void onPrepareAnvil(PrepareAnvilEvent event) {
+        if (event.getInventory().getFirstItem() != null && isReversePickaxe(event.getInventory().getFirstItem())) {
+            event.setResult(null);
+            if (event.getView().getPlayer() instanceof Player) {
+                ((Player) event.getView().getPlayer()).sendMessage("§cКирку Reverse нельзя ремонтировать в наковальне!");
+            }
+        }
+
+        if (event.getInventory().getSecondItem() != null && isReversePickaxe(event.getInventory().getSecondItem())) {
+            event.setResult(null);
+            if (event.getView().getPlayer() instanceof Player) {
+                ((Player) event.getView().getPlayer()).sendMessage("§cКирку Reverse нельзя использовать для ремонта!");
+            }
+        }
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();
@@ -201,5 +221,33 @@ public class HoolReverse extends JavaPlugin implements Listener, TabExecutor {
         }
 
         return completions;
+    }
+
+    private class CommandListener implements Listener {
+
+        @EventHandler
+        public void onPlayerCommand(org.bukkit.event.player.PlayerCommandPreprocessEvent event) {
+            Player player = event.getPlayer();
+            String message = event.getMessage().toLowerCase();
+
+            if (message.startsWith("/fix") || message.startsWith("/repair") ||
+                    message.startsWith("/minecraft:fix") || message.startsWith("/minecraft:repair") ||
+                    message.startsWith("/essentials:fix") || message.startsWith("/essentials:repair")) {
+
+                for (ItemStack item : player.getInventory().getContents()) {
+                    if (isReversePickaxe(item)) {
+                        player.sendMessage("§cНельзя использовать команды ремонта, пока у вас есть Кирка Reverse!");
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+
+                if (isReversePickaxe(player.getInventory().getItemInMainHand()) ||
+                        isReversePickaxe(player.getInventory().getItemInOffHand())) {
+                    player.sendMessage("§cНельзя использовать команды ремонта, пока у вас есть Кирка Reverse!");
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 }
