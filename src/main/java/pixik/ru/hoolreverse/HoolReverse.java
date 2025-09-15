@@ -64,7 +64,7 @@ public class HoolReverse extends JavaPlugin implements Listener, TabExecutor {
         if (lore.isEmpty()) {
             lore = List.of(
                     "§7Специальная кирка для добычи спавнеров",
-                    "§cПрочность: 1 использование"
+                    "§cПрочность: 1"
             );
         }
     }
@@ -152,7 +152,6 @@ public class HoolReverse extends JavaPlugin implements Listener, TabExecutor {
             ItemStack spawnerItem = new ItemStack(Material.SPAWNER);
 
             if (player.getInventory().addItem(spawnerItem).isEmpty()) {
-                player.sendMessage("§aСпавнер добавлен в ваш инвентарь!");
             } else {
                 block.getWorld().dropItemNaturally(block.getLocation(), spawnerItem);
                 player.sendMessage("§6Ваш инвентарь полон! Спавнер выпал на землю.");
