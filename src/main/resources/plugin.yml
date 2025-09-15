@@ -1,0 +1,14 @@
+name: HoolReverse
+version: '${project.version}'
+main: pixik.ru.hoolreverse.HoolReverse
+api-version: '1.21'
+authors: [PixikDev]
+commands:
+  hoolreverse:
+    description: Выдать Кирку Reverse
+    usage: /hoolreverse add <ник> <количество>
+    permission: hoolreverse.admin
+permissions:
+  hoolreverse.admin:
+    description: Право на использование команды hoolreverse
+    default: op
